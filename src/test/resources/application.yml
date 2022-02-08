@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: lottery-erp-server-ds-test
+  redis:
+    host: hayeslin.xyz
