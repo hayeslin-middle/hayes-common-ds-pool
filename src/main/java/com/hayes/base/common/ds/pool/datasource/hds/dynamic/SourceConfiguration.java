@@ -1,6 +1,6 @@
 package com.hayes.base.common.ds.pool.datasource.hds.dynamic;
 
-import com.hayes.base.common.ds.pool.model.DataSourceGroup;
+import com.hayes.base.common.ds.pool.datasource.model.DataSourceGroup;
 
 /**
  * @program: hayes-common-ds-pool

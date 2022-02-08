@@ -1,4 +1,4 @@
-package com.hayes.base.common.ds.pool.model;
+package com.hayes.base.common.ds.pool.datasource.model;
 
 import lombok.Getter;
 import lombok.Setter;

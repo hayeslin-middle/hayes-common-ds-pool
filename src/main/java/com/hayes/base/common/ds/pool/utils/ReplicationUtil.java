@@ -2,8 +2,8 @@ package com.hayes.base.common.ds.pool.utils;
 
 import com.hayes.base.common.ds.pool.exception.HdsException;
 import com.hayes.base.common.ds.pool.exception.HdsResultCode;
-import com.hayes.base.common.ds.pool.model.DataSourceConfig;
-import com.hayes.base.common.ds.pool.model.DataSourceGroup;
+import com.hayes.base.common.ds.pool.datasource.model.DataSourceConfig;
+import com.hayes.base.common.ds.pool.datasource.model.DataSourceGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

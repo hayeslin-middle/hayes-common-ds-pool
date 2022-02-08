@@ -1,7 +1,7 @@
 package com.hayes.base.common.ds.pool.datasource.hds.config;
 
 import com.hayes.base.common.ds.pool.datasource.hds.dynamic.SourceConfiguration;
-import com.hayes.base.common.ds.pool.model.DataSourceGroup;
+import com.hayes.base.common.ds.pool.datasource.model.DataSourceGroup;
 import lombok.Getter;
 import lombok.Setter;
 

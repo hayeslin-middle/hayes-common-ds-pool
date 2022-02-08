@@ -4,8 +4,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.hayes.base.common.ds.pool.datasource.hds.config.HdsConfig;
 import com.hayes.base.common.ds.pool.exception.HdsException;
 import com.hayes.base.common.ds.pool.exception.HdsResultCode;
-import com.hayes.base.common.ds.pool.model.DataSourceConfig;
-import com.hayes.base.common.ds.pool.model.DataSourceGroup;
+import com.hayes.base.common.ds.pool.datasource.model.DataSourceConfig;
+import com.hayes.base.common.ds.pool.datasource.model.DataSourceGroup;
 import com.hayes.base.common.ds.pool.utils.HdsUtil;
 import lombok.extern.log4j.Log4j2;
 
@@ -144,56 +144,68 @@ public class HdsDataSource extends HdsConfig implements Closeable, DataSource, C
 
     @Override
     public PooledConnection getPooledConnection() throws SQLException {
-        return null;
+        init();
+        PooledConnection pooledConnection = this.dataSourceHolder.getPooledConnection();
+        pooledConnection.getConnection().setReadOnly(false);
+        return pooledConnection;
     }
 
     @Override
     public PooledConnection getPooledConnection(String user, String password) throws SQLException {
-        return null;
+        init();
+        PooledConnection pooledConnection = this.dataSourceHolder.getPooledConnection(user, password);
+        pooledConnection.getConnection().setReadOnly(false);
+        return pooledConnection;
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return null;
+        init();
+        Connection connection = this.dataSourceHolder.getConnection();
+        connection.setReadOnly(false);
+        return connection;
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return null;
+        init();
+        Connection connection = this.dataSourceHolder.getConnection(username, password);
+        connection.setReadOnly(false);
+        return connection;
     }
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return null;
+        return (T) this.dataSourceHolder.unwrap(iface);
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return false;
+        return this.dataSourceHolder.isWrapperFor(iface);
     }
 
     @Override
     public PrintWriter getLogWriter() throws SQLException {
-        return null;
+        return this.dataSourceHolder.getLogWriter();
     }
 
     @Override
     public void setLogWriter(PrintWriter out) throws SQLException {
-
+        this.dataSourceHolder.setLogWriter(out);
     }
 
     @Override
     public void setLoginTimeout(int seconds) throws SQLException {
-
+        this.dataSourceHolder.setLoginTimeout(seconds);
     }
 
     @Override
     public int getLoginTimeout() throws SQLException {
-        return 0;
+        return this.dataSourceHolder.getLoginTimeout();
     }
 
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return null;
+        return this.dataSourceHolder.getParentLogger();
     }
 }
