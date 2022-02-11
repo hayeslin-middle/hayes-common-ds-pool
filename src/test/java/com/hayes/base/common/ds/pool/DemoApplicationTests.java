@@ -2,10 +2,7 @@ package com.hayes.base.common.ds.pool;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
-import com.hayes.base.common.ds.pool.mapper.Award;
-import com.hayes.base.common.ds.pool.mapper.AwardMapper;
-import com.hayes.base.common.ds.pool.mapper.UserStrategyExport;
-import com.hayes.base.common.ds.pool.mapper.UserStrategyExportMapper;
+import com.hayes.base.common.ds.pool.mapper.*;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +30,9 @@ public class DemoApplicationTests {
     @Autowired
     private UserStrategyExportMapper userStrategyExportMapper;
 
+    @Autowired
+    private UserTakeActivityMapper userTakeActivityMapper;
+
     @Test
     public void contextLoads() {
         // 测试读写分离
@@ -49,9 +49,12 @@ public class DemoApplicationTests {
     @Test
     public void contextLoads1() {
         // 测试分库分表
-        List<UserStrategyExport> list = new LambdaQueryChainWrapper<>(userStrategyExportMapper).eq(UserStrategyExport::getUserId, 100).list();
-
+        List<UserStrategyExport> list = new LambdaQueryChainWrapper<>(userStrategyExportMapper).eq(UserStrategyExport::getUserId, 10003).list();
         log.info("查询条数：{}", list.size());
+        List<UserTakeActivity> lists = new LambdaQueryChainWrapper<>(userTakeActivityMapper).eq(UserTakeActivity::getUserId, 10004).list();
+        log.info("查询条数：{}", lists.size());
+        List<Award> list3 = new LambdaQueryChainWrapper<>(awardMapper).eq(Award::getId,1).list();
+        log.info("查询条数：{}", list3.size());
 
     }
 

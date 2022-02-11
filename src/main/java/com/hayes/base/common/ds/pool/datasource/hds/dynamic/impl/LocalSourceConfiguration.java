@@ -8,10 +8,7 @@ import com.hayes.base.common.ds.pool.datasource.model.ReadWriteSplitRule;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @program: hayes-common-ds-pool
@@ -104,16 +101,21 @@ public class LocalSourceConfiguration implements SourceConfiguration {
         defaultDatabaseShardingStrategy.setAlgorithmExpression("ds$->{ user_id % 2 + 1 }");
         defaultDatabaseShardingStrategy.setDefaultShardingColumn("user_id");
 
+        List<DataBaseTableShardingRule.TableShardingStrategy> tableShardingStrategies = new ArrayList<>();
         DataBaseTableShardingRule.TableShardingStrategy tableShardingStrategy = new DataBaseTableShardingRule.TableShardingStrategy();
         tableShardingStrategy.setLogicTable("user_strategy_export");
         tableShardingStrategy.setActualDataNodes("ds$->{1..2}.user_strategy_export_00$->{0..3}");
         tableShardingStrategy.setShardingColumn("user_id");
         tableShardingStrategy.setAlgorithmExpression("user_strategy_export_00$->{ user_id % 4 }");
-
+        DataBaseTableShardingRule.TableShardingStrategy tableShardingStrategy2 = new DataBaseTableShardingRule.TableShardingStrategy();
+        tableShardingStrategy2.setLogicTable("user_take_activity");
+        tableShardingStrategy2.setActualDataNodes("ds$->{1..2}.user_take_activity");
+        tableShardingStrategies.add(tableShardingStrategy);
+        tableShardingStrategies.add(tableShardingStrategy2);
 
         DataBaseTableShardingRule tableShardingRule = new DataBaseTableShardingRule();
         tableShardingRule.setDefaultDatabaseShardingStrategy(defaultDatabaseShardingStrategy);
-        tableShardingRule.setTableGroupShardingStrategy(Collections.singleton(tableShardingStrategy));
+        tableShardingRule.setTableGroupShardingStrategy(tableShardingStrategies);
 
 
         DataSourceGroup.DataSourceRule settings = new DataSourceGroup.DataSourceRule();

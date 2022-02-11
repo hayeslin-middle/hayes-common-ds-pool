@@ -14,12 +14,13 @@ import org.apache.shardingsphere.driver.jdbc.core.datasource.ShardingSphereDataS
 import org.apache.shardingsphere.encrypt.algorithm.config.AlgorithmProvidedEncryptRuleConfiguration;
 import org.apache.shardingsphere.infra.config.RuleConfiguration;
 import org.apache.shardingsphere.infra.config.algorithm.ShardingSphereAlgorithmConfiguration;
+import org.apache.shardingsphere.infra.database.DefaultSchema;
 import org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration;
 import org.apache.shardingsphere.readwritesplitting.api.rule.ReadwriteSplittingDataSourceRuleConfiguration;
 import org.apache.shardingsphere.sharding.api.config.ShardingRuleConfiguration;
 import org.apache.shardingsphere.sharding.api.config.rule.ShardingTableRuleConfiguration;
 import org.apache.shardingsphere.sharding.api.config.strategy.keygen.KeyGenerateStrategyConfiguration;
-import org.apache.shardingsphere.sharding.api.config.strategy.sharding.ComplexShardingStrategyConfiguration;
+import org.apache.shardingsphere.sharding.api.config.strategy.sharding.StandardShardingStrategyConfiguration;
 
 import javax.sql.DataSource;
 import java.io.Closeable;
@@ -138,7 +139,7 @@ public class HdsDataSource extends HdsConfig implements Closeable, DataSource {
                     otherProperties.setProperty(stringObjectEntry.getKey(), stringObjectEntry.getValue());
                 }
             }
-            return new ShardingSphereDataSource("cluster", null, clusterDataSource,
+            return new ShardingSphereDataSource(DefaultSchema.LOGIC_NAME, null, clusterDataSource,
                     ruleConfigurationList.stream().filter(Objects::nonNull).collect(Collectors.toList()), otherProperties);
         } catch (Exception e) {
             throw new HdsException("interrupt eeror ", e);
@@ -180,31 +181,38 @@ public class HdsDataSource extends HdsConfig implements Closeable, DataSource {
         if (shardingRule == null) return null;
 
         ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
-        // 默认主键生成策略
-        shardingRuleConfiguration.setDefaultKeyGenerateStrategy(new KeyGenerateStrategyConfiguration("id", "snowflake"));
-        // 默认分库策略
+
+        // 分库策略
         DataBaseTableShardingRule.DefaultDatabaseShardingStrategy defaultDatabaseShardingStrategy = shardingRule.getDefaultDatabaseShardingStrategy();
         if (Optional.ofNullable(defaultDatabaseShardingStrategy).map(DataBaseTableShardingRule.DefaultDatabaseShardingStrategy::getDefaultShardingColumn).isPresent()) {
             Properties defaultDatabaseStrategyInlineProps = new Properties();
+            log.info("绑定 sharding database algorithms ： {}", defaultDatabaseShardingStrategy.getAlgorithmExpression());
             defaultDatabaseStrategyInlineProps.setProperty("algorithm-expression", defaultDatabaseShardingStrategy.getAlgorithmExpression());
             shardingRuleConfiguration.getShardingAlgorithms().put("default_db_strategy_inline", new ShardingSphereAlgorithmConfiguration("INLINE", defaultDatabaseStrategyInlineProps));
-            shardingRuleConfiguration.setDefaultDatabaseShardingStrategy(new ComplexShardingStrategyConfiguration(defaultDatabaseShardingStrategy.getDefaultShardingColumn(), "default_db_strategy_inline"));
+            shardingRuleConfiguration.setDefaultDatabaseShardingStrategy(new StandardShardingStrategyConfiguration(defaultDatabaseShardingStrategy.getDefaultShardingColumn(), "default_db_strategy_inline"));
         }
-        // 分表规则
+        // 分表策略
         Collection<DataBaseTableShardingRule.TableShardingStrategy> tableGroupShardingStrategy = shardingRule.getTableGroupShardingStrategy();
         if (CollUtil.isNotEmpty(tableGroupShardingStrategy)) {
             for (DataBaseTableShardingRule.TableShardingStrategy tableShardingStrategy : tableGroupShardingStrategy) {
-                // 设置分表规则
+                // 分表规则start
                 if (Optional.ofNullable(tableShardingStrategy).map(DataBaseTableShardingRule.TableShardingStrategy::getLogicTable).isPresent()) {
+                    log.info("绑定 sharding table: {}", tableShardingStrategy.getLogicTable());
                     ShardingTableRuleConfiguration shardingTableRuleConfiguration = new ShardingTableRuleConfiguration(tableShardingStrategy.getLogicTable(), tableShardingStrategy.getActualDataNodes());
-                    Properties tableShardingStrategyInlineProps = new Properties();
-                    tableShardingStrategyInlineProps.setProperty("algorithm-expression", tableShardingStrategy.getAlgorithmExpression());
-                    // // // t_order_user_id_strategy_inline
-                    String algorithmKey = String.format("%s_%s_strategy_inline", tableShardingStrategy.getLogicTable(), tableShardingStrategy.getShardingColumn());
-                    shardingRuleConfiguration.getShardingAlgorithms().put(algorithmKey, new ShardingSphereAlgorithmConfiguration("INLINE", tableShardingStrategyInlineProps));
-                    shardingTableRuleConfiguration.setTableShardingStrategy(new ComplexShardingStrategyConfiguration(tableShardingStrategy.getShardingColumn(), algorithmKey));
+                    // 分库配置- 上面有了默认暂不需要
+                    //shardingTableRuleConfiguration.setDatabaseShardingStrategy();
+                    // 分表配置
+                    if (StringUtils.isNotBlank(tableShardingStrategy.getShardingColumn()) && StringUtils.isNotBlank(tableShardingStrategy.getAlgorithmExpression())) {
+                        String algorithmKey = String.format("%s_%s_strategy_inline", tableShardingStrategy.getLogicTable(), tableShardingStrategy.getShardingColumn());
+                        shardingTableRuleConfiguration.setTableShardingStrategy(new StandardShardingStrategyConfiguration(tableShardingStrategy.getShardingColumn(), algorithmKey));
+
+                        Properties tableShardingStrategyInlineProps = new Properties();
+                        log.info("绑定 sharding table algorithms ： {}", tableShardingStrategy.getAlgorithmExpression());
+                        tableShardingStrategyInlineProps.setProperty("algorithm-expression", tableShardingStrategy.getAlgorithmExpression());
+                        shardingRuleConfiguration.getShardingAlgorithms().put(algorithmKey, new ShardingSphereAlgorithmConfiguration("INLINE", tableShardingStrategyInlineProps));
+                    }
+                    // 主键策略
                     if (StringUtils.isNotBlank(tableShardingStrategy.getPrimaryKey())) {
-                        // 主键策略
                         shardingTableRuleConfiguration.setKeyGenerateStrategy(new KeyGenerateStrategyConfiguration(tableShardingStrategy.getPrimaryKey(), "snowflake"));
                     }
                     // 绑定分表表
@@ -214,6 +222,9 @@ public class HdsDataSource extends HdsConfig implements Closeable, DataSource {
                 }
             }
         }
+        // 主键生成策略
+        shardingRuleConfiguration.setDefaultKeyGenerateStrategy(new KeyGenerateStrategyConfiguration("id", "snowflake"));
+
         // 主键生成算法
         shardingRuleConfiguration.getKeyGenerators().put("snowflake", new ShardingSphereAlgorithmConfiguration("SNOWFLAKE", new Properties()));
         shardingRuleConfiguration.getKeyGenerators().put("uuid", new ShardingSphereAlgorithmConfiguration("UUID", new Properties()));
