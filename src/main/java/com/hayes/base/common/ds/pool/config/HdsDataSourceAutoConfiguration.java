@@ -1,6 +1,5 @@
 package com.hayes.base.common.ds.pool.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.hayes.base.common.ds.pool.datasource.hds.HdsDataSource;
 import com.hayes.base.common.ds.pool.datasource.hds.dynamic.SourceConfiguration;
 import lombok.extern.log4j.Log4j2;
@@ -23,14 +22,14 @@ import javax.annotation.Resource;
  **/
 @Log4j2
 @Configuration
-@ConditionalOnClass(DruidDataSource.class)
+@ConditionalOnClass(HdsDataSource.class)
 @AutoConfigureBefore(DataSourceAutoConfiguration.class)
 public class HdsDataSourceAutoConfiguration {
 
     @Value("${spring.application.name}")
     private String applicationName;
     @Resource
-    private SourceConfiguration redisSourceConfiguration;
+    private SourceConfiguration localSourceConfiguration;
 
     @ConditionalOnMissingBean
     @Bean(name = "hdsDataSource", initMethod = "init", destroyMethod = "close")
@@ -38,7 +37,7 @@ public class HdsDataSourceAutoConfiguration {
         log.info("Init HdsDataSource.....");
         HdsDataSource hdsDataSource = new HdsDataSource();
         hdsDataSource.setApplicationName(applicationName);
-        hdsDataSource.setSource(redisSourceConfiguration);
+        hdsDataSource.setSource(localSourceConfiguration);
         return hdsDataSource;
     }
 

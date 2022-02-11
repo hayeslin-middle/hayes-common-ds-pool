@@ -3,7 +3,9 @@ package com.hayes.base.common.ds.pool.datasource.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: hayes-common-ds-pool
@@ -18,8 +20,15 @@ public class DataSourceGroup {
 
     private String applicationName;
     private String applicationDesc;
-    private int version ;
+    private int version;
+
+    /**
+     * single 和 cluster 互斥
+     */
+    private DataBase single;
     private DataBaseCluster cluster;
+
+    private DataSourceRule settings;
 
     @Getter
     @Setter
@@ -27,7 +36,8 @@ public class DataSourceGroup {
 
         private String clusterName;
         private String clusterDesc;
-        private List<DataBase> dataBaseList;
+        private List<String> dsNames;
+        private Map<String, DataBase> dataBaseMap;
 
         /**
          * 如果集群下用户名｜密码｜数据库名 一样
@@ -40,10 +50,27 @@ public class DataSourceGroup {
 
     @Getter
     @Setter
+    public static final class DataSourceRule {
+
+        // 读写分离
+        private Collection<ReadWriteSplitRule> rwRules;
+        // 分库分表
+        private DataBaseTableShardingRule shardingRule;
+        // 数据加密 （暂未支持）
+        private Collection<EncryptColumnRule> encryptColumnRules;
+
+        //其他配置
+        private Map<String, String> otherRules;
+
+    }
+
+
+
+    @Getter
+    @Setter
     public static final class DataBase {
 
         private String dsName;
-        private boolean master;
         private String host;
         private int port = 3306;
 
