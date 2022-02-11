@@ -20,6 +20,12 @@ import java.util.Map;
 public class HdsUtil {
     private static final Logger log = LoggerFactory.getLogger(HdsUtil.class);
 
+    private static final String DRIVER_CLASS_NAME = "driverClassName";
+    private static final String JDBC_URL_NAME = "jdbcUrl";
+    private static final String MYSQL_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
+    private static final String JDBC_URL_PREFIX = "jdbc:mysql:";
+    private static final String DATASOURCE_CLASS_NAME = "com.zaxxer.hikari.HikariDataSource";
+    private static final String JDBC_URL_OTHER_SETTINGS = "?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true";
 
     /**
      * 创建单机数据源
@@ -30,12 +36,12 @@ public class HdsUtil {
     public static DataSource createSingleDataSource(DataSourceGroup.DataBase single) {
 
         Map<String, Object> map = JSONObject.parseObject(JSONObject.toJSONString(single), Map.class);
-        map.put("jdbcUrl", String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true", single.getHost(), single.getPort(), single.getDbName()));
-        map.put("driverClassName","com.mysql.cj.jdbc.Driver");
+        map.put(JDBC_URL_NAME, String.format("%s//%s:%s/%s%s", JDBC_URL_PREFIX, single.getHost(), single.getPort(), single.getDbName(), JDBC_URL_OTHER_SETTINGS));
+        map.put(DRIVER_CLASS_NAME, MYSQL_DRIVER_CLASS);
         try {
-            return DataSourceUtil.getDataSource("com.zaxxer.hikari.HikariDataSource", map);
+            return DataSourceUtil.getDataSource(DATASOURCE_CLASS_NAME, map);
         } catch (Exception e) {
-            throw new HdsException("创建数据源失败",e);
+            throw new HdsException("创建数据源失败", e);
         }
 
     }
@@ -53,38 +59,5 @@ public class HdsUtil {
         }
         return dsMap;
     }
-
-    ///**
-    // * @param group
-    // * @return
-    // */
-    //public static DataSourceConfig convertJDBCConfig(DataSourceGroup group) {
-    //    DataSourceConfig dataSourceConfig = new DataSourceConfig();
-    //    dataSourceConfig.setName(group.getCluster().getClusterName());
-    //    dataSourceConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-    //    dataSourceConfig.setUrl(ReplicationUtil.generateClusterJdbcUrl(group.getCluster()));
-    //    dataSourceConfig.setUsername(group.getCluster().getUsername());
-    //    dataSourceConfig.setPassword(group.getCluster().getPassword());
-    //    return dataSourceConfig;
-    //}
-    ///**
-    // * 获取master
-    // *
-    // * @param dataBaseList
-    // * @return
-    // */
-    //public static List<DataSourceGroup.DataBase> getSlaves(List<DataSourceGroup.DataBase> dataBaseList) {
-    //    return dataBaseList.stream().filter(db -> !db.isMaster()).collect(Collectors.toList());
-    //}
-    //
-    ///**
-    // * 获取slaves
-    // *
-    // * @param dataBaseList
-    // * @return
-    // */
-    //public static Optional<DataSourceGroup.DataBase> getMaster(List<DataSourceGroup.DataBase> dataBaseList) {
-    //    return dataBaseList.stream().filter(DataSourceGroup.DataBase::isMaster).findFirst();
-    //}
 
 }

@@ -1,4 +1,4 @@
-package com.hayes.base.common.ds.pool.datasource.hds.dynamic.impl;
+package com.hayes.base.common.ds.pool.load;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hayes.base.common.ds.pool.datasource.hds.dynamic.SourceConfiguration;
@@ -23,8 +23,8 @@ public class LocalSourceConfiguration implements SourceConfiguration {
 
     @Override
     public DataSourceGroup load(String applicationName) {
-        //return rwSplitConfiguration();
-        return shardingTbConfiguration();
+        return rwSplitConfiguration();
+        //return shardingTbConfiguration();
 
 
     }

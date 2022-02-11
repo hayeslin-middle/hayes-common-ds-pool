@@ -15,9 +15,13 @@ import java.util.Collection;
 @Getter
 @Setter
 public class DataBaseTableShardingRule {
-
-    //private Collection<String> bindingTableGroups;
+    /**
+     * 分库配置
+     */
     private DefaultDatabaseShardingStrategy defaultDatabaseShardingStrategy;
+    /**
+     * 分表配置
+     */
     private Collection<TableShardingStrategy> tableGroupShardingStrategy;
 
     @Getter
