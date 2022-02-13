@@ -34,7 +34,7 @@ public class SourceStorage {
             String tmp;
             while ((tmp = reader.readLine()) != null)
                 sb.append(tmp);
-            return Optional.ofNullable(sb.toString());
+            return Optional.of(sb).map(StringBuilder::toString);
 
         }
 
