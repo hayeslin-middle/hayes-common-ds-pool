@@ -2,9 +2,9 @@ package com.hayes.base.common.ds.pool.datasource.hds.dynamic.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hayes.base.common.ds.pool.datasource.hds.dynamic.SourceConfiguration;
+import com.hayes.base.common.ds.pool.datasource.model.DataSourceGroup;
 import com.hayes.base.common.ds.pool.exception.HdsException;
 import com.hayes.base.common.ds.pool.exception.HdsResultCode;
-import com.hayes.base.common.ds.pool.datasource.model.DataSourceGroup;
 import com.hayes.base.common.redis.service.RedisService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

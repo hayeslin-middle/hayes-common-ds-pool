@@ -29,6 +29,8 @@ public class HdsDataSourceAutoConfiguration {
     @Value("${spring.application.name}")
     private String applicationName;
     @Resource
+    private SourceConfiguration localSourceConfiguration;
+    @Resource
     private SourceConfiguration redisSourceConfiguration;
 
     @ConditionalOnMissingBean
@@ -37,7 +39,8 @@ public class HdsDataSourceAutoConfiguration {
         log.info("Init HdsDataSource.....");
         HdsDataSource hdsDataSource = new HdsDataSource();
         hdsDataSource.setApplicationName(applicationName);
-        hdsDataSource.setSource(redisSourceConfiguration);
+        hdsDataSource.setRedisSourceConfiguration(redisSourceConfiguration);
+        hdsDataSource.setLocalSourceConfiguration(localSourceConfiguration);
         return hdsDataSource;
     }
 
