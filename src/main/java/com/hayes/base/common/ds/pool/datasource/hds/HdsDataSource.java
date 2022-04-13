@@ -65,6 +65,8 @@ public class HdsDataSource extends HdsConfig implements Closeable, DataSource {
 
             DataSourceGroup dataSourceGroup = getDataSourceGroup();
             this.dataSourceHolder = this.buildDataSource(dataSourceGroup);
+            setVersion(dataSourceGroup.getVersion());
+            log.info("数据源配置信息：App:{}, Cluster:{}, version:{}", dataSourceGroup.getApplicationDesc(), dataSourceGroup.getCluster().getClusterDesc(),dataSourceGroup.getVersion());
             startScheduleRefresh();
         } catch (Exception e) {
             log.error("init error: {}", e.getMessage(), e);
@@ -290,11 +292,12 @@ public class HdsDataSource extends HdsConfig implements Closeable, DataSource {
         ShardingSphereDataSource oldDruidDataSource = this.dataSourceHolder;
         this.dataSourceHolder = newDruidDataSource;
         try {
+            setVersion(group.getVersion());
             oldDruidDataSource.close();
         } catch (Exception e) {
             log.error("close old dataSource error!", e);
         }
-        log.info("datasource reloaded!");
+        log.info("reloaded! 数据源配置信息：App:{}, Cluster:{}, version:{}", group.getApplicationDesc(), group.getCluster().getClusterDesc(), group.getVersion());
     }
 
     @Override

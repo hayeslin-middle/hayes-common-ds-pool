@@ -26,19 +26,12 @@ public class RedisSourceConfiguration implements SourceConfiguration {
 
     @Override
     public DataSourceGroup load(String applicationName) {
-
         String key = "hds:" + applicationName;
-
         Object obj = redisService.get(key);
-
         if (Objects.isNull(obj)) {
             return null;
         }
-
         DataSourceGroup dataSourceGroup = JSONObject.parseObject(obj.toString(), DataSourceGroup.class);
-
-        log.info("数据源配置信息：App:{}, Cluster: {} ", dataSourceGroup.getApplicationDesc(), dataSourceGroup.getCluster().getClusterDesc());
-
         return dataSourceGroup;
     }
 }
