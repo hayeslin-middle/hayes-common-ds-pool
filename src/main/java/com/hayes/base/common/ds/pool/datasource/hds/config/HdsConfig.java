@@ -26,19 +26,19 @@ import java.util.concurrent.ScheduledExecutorService;
 @Setter
 @Getter
 public abstract class HdsConfig {
-
+    /** 应用名 */
     private String applicationName;
-
+    /** 调度执行器 */
     private ScheduledExecutorService executorService;
-
+    /** 定时刷新间隔 */
     private long refreshInterval = 30000L;
-
-    private boolean autoRefresh = false;
-
+    /** 是否开启定时刷新配置 */
+    private boolean autoRefresh = true;
+    /** redis数据源配置 */
     private SourceConfiguration redisSourceConfiguration;
-
+    /** 本地数据源配置 */
     private SourceConfiguration localSourceConfiguration;
-
+    /** 版本号 */
     private Integer version;
 
     protected DataSourceGroup getDataSourceGroup() {
