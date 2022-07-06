@@ -4,12 +4,8 @@ import com.hayes.base.common.ds.pool.datasource.hds.HdsDataSource;
 import com.hayes.base.common.ds.pool.datasource.hds.dynamic.SourceConfiguration;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 
@@ -21,9 +17,9 @@ import javax.annotation.Resource;
  * @create: 2022-02-08 14:57
  **/
 @Log4j2
-@Configuration
-@ConditionalOnClass(HdsDataSource.class)
-@AutoConfigureBefore(DataSourceAutoConfiguration.class)
+//@Configuration
+//@ConditionalOnClass(HdsDataSource.class)
+//@AutoConfigureBefore(DataSourceAutoConfiguration.class)
 public class HdsDataSourceAutoConfiguration {
 
     @Value("${spring.application.name}")

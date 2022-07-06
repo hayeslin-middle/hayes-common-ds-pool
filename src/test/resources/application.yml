@@ -1,5 +1,5 @@
 spring:
   application:
-    name: lottery-server11
+    name: hayes-lottery
   redis:
     host: hayeslin.xyz

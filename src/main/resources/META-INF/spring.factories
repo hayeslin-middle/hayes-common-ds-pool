@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.hayes.base.common.ds.pool.config.HdsDataSourceAutoConfiguration
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#  com.hayes.base.common.ds.pool.config.HdsDataSourceAutoConfiguration
