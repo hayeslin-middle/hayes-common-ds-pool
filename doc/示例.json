@@ -1,0 +1,58 @@
+{
+    "applicationDesc": "抽奖系统",
+    "applicationName": "lottery",
+    "cluster": {
+        "clusterDesc": "阿里RDS",
+        "clusterName": "alibaba-rds",
+        "dataBaseMap": {
+            "ds": {
+                "dbName": "lottery",
+                "dsName": "ds",
+                "host": "127.0.0.1",
+                "password": "123456",
+                "port": 3306,
+                "username": "root"
+            },
+            "ds1": {
+                "dbName": "lottery_01",
+                "dsName": "ds1",
+                "host": "127.0.0.1",
+                "password": "123456",
+                "port": 3306,
+                "username": "root"
+            },
+            "ds2": {
+                "dbName": "lottery_02",
+                "dsName": "ds2",
+                "host": "127.0.0.1",
+                "password": "123456",
+                "port": 3306,
+                "username": "root"
+            }
+        }
+    },
+    "settings": {
+        "otherRules": {
+            "sql-show": "false"
+        },
+        "shardingRule": {
+            "defaultDatabaseShardingStrategy": {
+                "algorithmExpression": "ds$->{ col1 % 2 + 1 }",
+                "defaultShardingColumn": "col1"
+            },
+            "tableGroupShardingStrategy": [
+                {
+                    "actualDataNodes": "ds$->{1..2}.table1_00$->{0..3}",
+                    "algorithmExpression": "table1_00$->{ col1 % 4 }",
+                    "logicTable": "table1",
+                    "shardingColumn": "col1"
+                },
+                {
+                    "actualDataNodes": "ds$->{1..2}.table2",
+                    "logicTable": "table2"
+                }
+            ]
+        }
+    },
+    "version": 1
+}
