@@ -20,21 +20,6 @@
         <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
     </properties>
 
-    <distributionManagement>
-        <repository>
-            <!-- 对应Maven setting.xml配置文件中 server 一一对应 -->
-            <id>rdc-releases</id>
-            <name>RDC Release Repository</name>
-            <url>https://packages.aliyun.com/maven/repository/2183847-release-bfwpfA</url>
-        </repository>
-        <snapshotRepository>
-            <!-- 对应Maven setting.xml配置文件中 server 一一对应 -->
-            <id>rdc-snapshots</id>
-            <name>RDC snapshot Repository</name>
-            <url>https://packages.aliyun.com/maven/repository/2183847-snapshot-DMkQ5C</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -70,7 +55,6 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
